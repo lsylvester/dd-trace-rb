@@ -83,7 +83,9 @@ RSpec.describe 'ActiveJob' do
 
     it 'instruments enqueue_at under the "enqueue" span' do
       scheduled_at = 1.minute.from_now
+
       job_class.set(queue: :mice, priority: -10, wait_until: scheduled_at).perform_later
+
       perform_enqueued_jobs
 
       span = spans.find { |s| s.name == 'active_job.enqueue' }
@@ -113,6 +115,8 @@ RSpec.describe 'ActiveJob' do
       expect(span.get_tag('active_job.adapter')).to eq('ActiveJob::QueueAdapters::TestAdapter')
       expect(span.get_tag('active_job.job.id')).to match(/[0-9a-f-]{32}/)
       expect(span.get_tag('active_job.job.queue')).to eq('elephants')
+      expect(span.get_tag('active_job.job.delay')).to be_present
+
       expect(span.get_tag(Datadog::Tracing::Metadata::Ext::TAG_COMPONENT))
         .to eq('active_job')
       expect(span.get_tag(Datadog::Tracing::Metadata::Ext::TAG_OPERATION))

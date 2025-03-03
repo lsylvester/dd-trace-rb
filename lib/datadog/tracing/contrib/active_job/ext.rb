@@ -26,6 +26,7 @@ module Datadog
           TAG_OPERATION_RETRY_STOPPED = 'retry_stopped'
 
           TAG_ADAPTER = 'active_job.adapter'
+          TAG_JOB_DELAY = 'active_job.job.delay'
           TAG_JOB_ERROR = 'active_job.job.error'
           TAG_JOB_EXECUTIONS = 'active_job.job.executions'
           TAG_JOB_ID = 'active_job.job.id'

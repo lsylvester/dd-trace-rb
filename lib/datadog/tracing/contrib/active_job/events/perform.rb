@@ -38,6 +38,16 @@ module Datadog
               end
 
               set_common_tags(span, payload)
+
+              job = payload[:job]
+
+              job_scheduled_at = job.scheduled_at if job.respond_to?(:scheduled_at)
+              job_scheduled_at ||= job.enqueued_at if job.respond_to?(:enqueued_at)
+
+              job_scheduled_at = Time.at(job_scheduled_at) if job_scheduled_at.is_a?(Numeric)
+
+              span.set_tag(Ext::TAG_JOB_DELAY, 1000.0 * (Time.now.utc.to_f - job_scheduled_at.to_f)) if job_scheduled_at
+
             rescue StandardError => e
               Datadog.logger.debug(e.message)
             end
