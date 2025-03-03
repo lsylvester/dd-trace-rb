@@ -46,10 +46,12 @@ module Datadog
 
               job_scheduled_at = Time.at(job_scheduled_at) if job_scheduled_at.is_a?(Numeric)
 
+              Datadog.logger.info(job_scheduled_at.inspect)
+
               span.set_tag(Ext::TAG_JOB_DELAY, 1000.0 * (Time.now.utc.to_f - job_scheduled_at.to_f)) if job_scheduled_at
 
             rescue StandardError => e
-              Datadog.logger.debug(e.message)
+              Datadog.logger.info(e.message)
             end
           end
         end
